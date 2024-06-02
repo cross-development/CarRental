@@ -1,4 +1,7 @@
-﻿namespace CarRental;
+﻿using CarRental.Enums;
+using CarRental.Models;
+
+namespace CarRental;
 
 public class Program
 {
@@ -7,7 +10,7 @@ public class Program
         // Creating a car for rent
         Car car = new Car(year: "2020")
         {
-            Id = "1HGCM82633A123456",
+            Id = new Guid(),
             VinCode = "1HGCM82633A123456",
             SerialNumber = "SN12345678",
             TransmissionType = "Automatic",
@@ -16,41 +19,40 @@ public class Program
 
         Customer customer = new Customer
         {
+            Id = new Guid(),
             FirstName = "John",
             LastName = "Doe",
-            IdNumber = "ID12345",
             PassportNumber = "P1234567",
-            DrivingLicenseNumber = "DL123456",
             DateOfBirth = new DateTime(1990, 1, 1),
-            Gender = "Male"
+            Gender = Gender.Male
         };
 
         Inspector inspector = new Inspector
         {
+            Id = new Guid(),
             FirstName = "Jane",
             LastName = "Smith",
-            IdNumber = "INS123",
             StartDate = new DateTime(2020, 5, 1)
         };
 
         Inspection inspection = new Inspection
         {
-            InspectionId = "INS123456"
-        };
-
-        Deal deal = new Deal
-        {
-            CompanyId = "COMP123",
-            CustomerId = customer.IdNumber,
-            DealType = DealType.Rent,
-            CarId = car.Id,
-            Price = 200.00M
+            Id = new Guid(),
         };
 
         Company company = new Company
         {
-            CompanyId = "COMP123",
+            Id = new Guid(),
             Name = "AutoRentals"
+        };
+
+        Deal deal = new Deal
+        {
+            CompanyId = company.Id,
+            CustomerId = customer.Id,
+            DealType = DealType.Rent,
+            CarId = car.Id,
+            Price = 200.00M
         };
 
         // Subscribing to the events
@@ -77,7 +79,7 @@ public class Program
         // An example for checking an event when a car has not passed an inspection
         Car carUnfit = new Car(year: "2019")
         {
-            Id = "1HGCM82633A654321",
+            Id = new Guid(),
             VinCode = "1HGCM82633A654321",
             SerialNumber = "SN87654321",
             TransmissionType = "Manual",
@@ -88,7 +90,7 @@ public class Program
 
         Inspection unfitInspection = new Inspection
         {
-            InspectionId = "INS654321"
+            Id = new Guid(),
         };
 
         inspector.InspectCar(carUnfit, unfitInspection);
@@ -99,7 +101,7 @@ public class Program
         // Creating a car for sale
         Car carForSale = new Car(year: "2018")
         {
-            Id = "1HGCM82633A765432",
+            Id = new Guid(),
             VinCode = "1HGCM82633A765432",
             SerialNumber = "SN23456789",
             TransmissionType = "Automatic",
@@ -111,8 +113,8 @@ public class Program
         // Creating a sales agreement
         Deal saleDeal = new Deal
         {
-            CompanyId = company.CompanyId,
-            CustomerId = customer.IdNumber,
+            CompanyId = company.Id,
+            CustomerId = customer.Id,
             DealType = DealType.Purchase,
             CarId = carForSale.Id,
             Price = 15000.00M
@@ -133,7 +135,7 @@ public class Program
         // Creating a car without a year of manufacture to demonstrate the check
         Car carWithoutYear = new Car(year: null)
         {
-            Id = "1HGCM82633A654322",
+            Id = new Guid(),
             Mark = "Toyota Corolla"
         };
 

@@ -1,21 +1,26 @@
-﻿namespace CarRental;
+﻿using CarRental.Enums;
+using CarRental.Models;
 
-public class Inspector
+namespace CarRental.Managers;
+
+public sealed class InspectorManager
 {
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string IdNumber { get; set; }
-    public DateTime StartDate { get; set; }
+    private readonly Inspector _inspector;
+
+    public InspectorManager(Inspector inspector)
+    {
+        _inspector = inspector;
+    }
 
     public event EventHandler<Car> CarRemoved;
 
     public void InspectCar(Car car, Inspection inspection)
     {
         inspection.Date = DateTime.Now;
-        inspection.Inspector = this;
+        inspection.Inspector = _inspector;
         inspection.CarId = car.Id;
 
-        Console.WriteLine($"Inspection done on {inspection.Date} by {FirstName} {LastName}");
+        Console.WriteLine($"Inspection done on {inspection.Date} by {_inspector.FirstName} {_inspector.LastName}");
     }
 
     public void RecordInspectionResult(Inspection inspection, InspectionResult result)

@@ -1,21 +1,26 @@
-﻿namespace CarRental;
+﻿using CarRental.Models;
 
-public class Company
+namespace CarRental.Managers;
+
+public sealed class CompanyManager
 {
-    public string CompanyId { get; set; }
-    public string Name { get; set; }
-    public List<Car> Cars { get; set; } = new List<Car>();
+    private readonly Company _company;
+
+    public CompanyManager(Company company)
+    {
+        _company = company;
+    }
 
     public void AddCar(Car car)
     {
-        Cars.Add(car);
+        _company.Cars.Add(car);
 
         Console.WriteLine($"Car with ID {car.Id} added to the company.");
     }
 
     public void RemoveCar(Car car)
     {
-        Cars.Remove(car);
+        _company.Cars.Remove(car);
 
         Console.WriteLine($"Car with ID {car.Id} removed from the company.");
     }

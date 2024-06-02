@@ -1,4 +1,4 @@
-﻿namespace CarRental;
+﻿namespace CarRental.Enums;
 
 public enum DealType
 {
