@@ -13,8 +13,6 @@ public sealed class DealManager
 
     public void ConcludeDeal()
     {
-        _deal.DealDate = DateTime.Now;
-
         Console.WriteLine($"Deal concluded on {_deal.DealDate}");
     }
 

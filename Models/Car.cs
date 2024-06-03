@@ -1,4 +1,6 @@
-﻿namespace CarRental.Models;
+﻿using CarRental.Enums;
+
+namespace CarRental.Models;
 
 public class Car
 {
@@ -8,7 +10,7 @@ public class Car
     public string Mark { get; set; }
     public string VinCode { get; set; }
     public string SerialNumber { get; set; }
-    public string TransmissionType { get; set; }
+    public TransmissionType TransmissionType { get; set; }
 
     public Car(string year)
     {

@@ -27,17 +27,20 @@ public sealed class CompanyManager
 
     public void OnCarRented(object sender, Car car)
     {
-        Console.WriteLine($"Event: Car with ID {car.Id} has been rented by {((Customer)sender).FirstName} {((Customer)sender).LastName}");
+        Console.WriteLine($"Event: Car with ID {car.Id} has been rented by " +
+                          $"{((CustomerManager)sender).Customer.FirstName} {((CustomerManager)sender).Customer.LastName}");
     }
 
     public void OnCarBought(object sender, Car car)
     {
-        Console.WriteLine($"Event: Car with ID {car.Id} has been bought by {((Customer)sender).FirstName} {((Customer)sender).LastName}");
+        Console.WriteLine($"Event: Car with ID {car.Id} has been bought by " +
+                          $"{((CustomerManager)sender).Customer.FirstName} {((CustomerManager)sender).Customer.LastName}");
     }
 
     public void OnPaymentReceived(object sender, decimal amount)
     {
-        Console.WriteLine($"Event: Payment of {amount} received from {((Customer)sender).FirstName} {((Customer)sender).LastName}");
+        Console.WriteLine($"Event: Payment of {amount} received from " +
+                          $"{((CustomerManager)sender).Customer.FirstName} {((CustomerManager)sender).Customer.LastName}");
     }
 
     public void OnCarRemoved(object sender, Car car)

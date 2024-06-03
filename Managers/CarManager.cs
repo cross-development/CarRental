@@ -13,7 +13,9 @@ public sealed class CarManager
         _car = car;
     }
 
-    public void Remove()
+    public Car Car => _car;
+
+    public void RemoveCar()
     {
         Console.WriteLine("Car removed from the system.");
     }

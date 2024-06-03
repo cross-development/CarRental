@@ -35,18 +35,18 @@ public sealed class InspectorManager
         }
     }
 
-    private Car GetCarById(string carId)
+    private Car GetCarById(Guid carId)
     {
         // This should return a Car object based on the carId. For simplicity, returning a new Car.
         return new Car("Unknown Year") { Id = carId };
     }
 
-    public void RemoveCarIfUnfit(Car car, Inspection inspection)
+    public void RemoveCarIfUnfit(CarManager carManager, Inspection inspection)
     {
         if (inspection.Result == InspectionResult.Unfit)
         {
-            car.Remove();
-            CarRemoved?.Invoke(this, car);
+            carManager.RemoveCar();
+            CarRemoved?.Invoke(this, carManager.Car);
         }
     }
 }

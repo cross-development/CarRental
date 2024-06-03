@@ -11,6 +11,8 @@ public sealed class CustomerManager
         _customer = customer;
     }
 
+    public Customer Customer => _customer;
+
     public event EventHandler<Car> CarRented;
     public event EventHandler<Car> CarBought;
     public event EventHandler<decimal> MoneyPaid;
