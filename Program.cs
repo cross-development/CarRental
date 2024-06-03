@@ -1,146 +1,227 @@
-﻿namespace CarRental;
+﻿using CarRental.Enums;
+using CarRental.Managers;
+using CarRental.Models;
+using CarRental.Extensions;
+
+namespace CarRental;
 
 public class Program
 {
     static void Main(string[] args)
     {
-        // Creating a car for rent
+        RentCarCase();
+
+        SaleCarCase();
+
+        UnfitInspectionCase();
+
+        CarWithoutYearCase();
+
+        Console.ReadKey();
+    }
+
+    // Handling rent car case
+    static void RentCarCase()
+    {
+        Console.WriteLine("RentCarCase");
+
         Car car = new Car(year: "2020")
         {
-            Id = "1HGCM82633A123456",
+            Id = Guid.NewGuid(),
             VinCode = "1HGCM82633A123456",
             SerialNumber = "SN12345678",
-            TransmissionType = "Automatic",
+            TransmissionType = TransmissionType.Automatic,
             Mark = "Honda Accord"
         };
 
         Customer customer = new Customer
         {
+            Id = Guid.NewGuid(),
             FirstName = "John",
             LastName = "Doe",
-            IdNumber = "ID12345",
             PassportNumber = "P1234567",
-            DrivingLicenseNumber = "DL123456",
             DateOfBirth = new DateTime(1990, 1, 1),
-            Gender = "Male"
+            Gender = Gender.Male
         };
 
         Inspector inspector = new Inspector
         {
+            Id = Guid.NewGuid(),
             FirstName = "Jane",
             LastName = "Smith",
-            IdNumber = "INS123",
             StartDate = new DateTime(2020, 5, 1)
         };
 
         Inspection inspection = new Inspection
         {
-            InspectionId = "INS123456"
-        };
-
-        Deal deal = new Deal
-        {
-            CompanyId = "COMP123",
-            CustomerId = customer.IdNumber,
-            DealType = DealType.Rent,
+            Id = Guid.NewGuid(),
             CarId = car.Id,
-            Price = 200.00M
+            Inspector = inspector,
+            Date = DateTime.Now
         };
 
         Company company = new Company
         {
-            CompanyId = "COMP123",
-            Name = "AutoRentals"
+            Id = Guid.NewGuid(),
+            Name = "AutoRentals",
         };
 
-        // Subscribing to the events
-        customer.CarRented += company.OnCarRented;
-        customer.CarBought += company.OnCarBought;
-        customer.MoneyPaid += company.OnPaymentReceived;
+        Deal deal = new Deal(Id: Guid.NewGuid(),
+            CompanyId: company.Id,
+            CustomerId: customer.Id,
+            DealType: DealType.Rent,
+            CarId: car.Id,
+            Price: 200.00M,
+            DealDate: DateTime.Now);
 
-        inspector.CarRemoved += company.OnCarRemoved;
+        var outputManager = new OutputManager();
+        var customerManager = new CustomerManager(customer, outputManager);
+        var companyManager = new CompanyManager(company, outputManager);
+        var inspectorManager = new InspectorManager(inspector, outputManager);
+        var dealManager = new DealManager(deal, outputManager);
+        var carManager = new CarManager(car, outputManager);
 
-        company.AddCar(car);
-        customer.PayMoney(deal.Price);
-        customer.RentCar(car);
+        customerManager.CarRented += companyManager.OnCarRented;
+        customerManager.CarBought += companyManager.OnCarBought;
+        customerManager.MoneyPaid += companyManager.OnPaymentReceived;
+        inspectorManager.CarRemoved += companyManager.OnCarRemoved;
 
-        deal.ConcludeDeal();
+        companyManager.AddCar(car);
+        customerManager.PayMoney(deal.Price);
+        customerManager.RentCar(car);
 
-        inspector.InspectCar(car, inspection);
-        inspector.RecordInspectionResult(inspection, InspectionResult.Fit);
-        inspector.RemoveCarIfUnfit(car, inspection);
+        dealManager.ConcludeDeal();
 
-        customer.ReturnCar(car);
+        deal.DisplayDealDetails();
 
-        deal.TerminateDeal();
+        inspectorManager.InspectCar(car, inspection);
+        inspectorManager.RecordInspectionResult(inspection, InspectionResult.Fit);
+        inspectorManager.RemoveCarIfUnfit(carManager, inspection);
 
-        // An example for checking an event when a car has not passed an inspection
-        Car carUnfit = new Car(year: "2019")
+        customerManager.ReturnCar(car);
+
+        dealManager.TerminateDeal();
+    }
+
+    static void SaleCarCase()
+    {
+        Console.WriteLine("\nSaleCarCase");
+
+        Car car = new Car(year: "2018")
         {
-            Id = "1HGCM82633A654321",
-            VinCode = "1HGCM82633A654321",
-            SerialNumber = "SN87654321",
-            TransmissionType = "Manual",
-            Mark = "Toyota Corolla"
-        };
-
-        company.AddCar(carUnfit);
-
-        Inspection unfitInspection = new Inspection
-        {
-            InspectionId = "INS654321"
-        };
-
-        inspector.InspectCar(carUnfit, unfitInspection);
-        inspector.RecordInspectionResult(unfitInspection, InspectionResult.Fit);
-        inspector.RemoveCarIfUnfit(carUnfit, unfitInspection);
-
-        // An example for checking an event when a car has been sold
-        // Creating a car for sale
-        Car carForSale = new Car(year: "2018")
-        {
-            Id = "1HGCM82633A765432",
+            Id = Guid.NewGuid(),
             VinCode = "1HGCM82633A765432",
             SerialNumber = "SN23456789",
-            TransmissionType = "Automatic",
+            TransmissionType = TransmissionType.Automatic,
             Mark = "Ford Focus"
         };
 
-        company.AddCar(carForSale);
-
-        // Creating a sales agreement
-        Deal saleDeal = new Deal
+        Company company = new Company
         {
-            CompanyId = company.CompanyId,
-            CustomerId = customer.IdNumber,
-            DealType = DealType.Purchase,
-            CarId = carForSale.Id,
-            Price = 15000.00M
+            Id = Guid.NewGuid(),
+            Name = "AutoRentals",
         };
 
-        // Performing actions for the sale
-        customer.PayMoney(saleDeal.Price);
-        customer.BuyCar(carForSale);
-        saleDeal.ConcludeDeal();
+        var outputManager = new OutputManager();
+        var companyManager = new CompanyManager(company, outputManager);
 
-        // Checking the availability of cars in the company after the sale
-        company.RemoveCar(carForSale);
+        companyManager.AddCar(car);
 
-        // Checking the operation of the GetCarInfo methods
-        Console.WriteLine(car.GetCarInfo());
-        Console.WriteLine(car.GetCarInfo(true));
-
-        // Creating a car without a year of manufacture to demonstrate the check
-        Car carWithoutYear = new Car(year: null)
+        Customer customer = new Customer
         {
-            Id = "1HGCM82633A654322",
+            Id = Guid.NewGuid(),
+            FirstName = "John",
+            LastName = "Doe",
+            PassportNumber = "P1234567",
+            DateOfBirth = new DateTime(1990, 1, 1),
+            Gender = Gender.Male
+        };
+
+        Deal deal = new Deal(Id: Guid.NewGuid(),
+            CompanyId: company.Id,
+            CustomerId: customer.Id,
+            DealType: DealType.Purchase,
+            CarId: car.Id,
+            Price: 15000.00M,
+            DealDate: DateTime.Now);
+
+        var dealManager = new DealManager(deal, outputManager);
+        var customerManager = new CustomerManager(customer, outputManager);
+        var carManager = new CarManager(car, outputManager);
+
+        customerManager.PayMoney(deal.Price);
+        customerManager.BuyCar(car);
+        dealManager.ConcludeDeal();
+
+        deal.DisplayDealDetails();
+
+        companyManager.RemoveCar(car);
+
+        Console.WriteLine(carManager.GetCarInfo());
+        Console.WriteLine(carManager.GetCarInfo(true));
+    }
+
+    static void UnfitInspectionCase()
+    {
+        Console.WriteLine("\nUnfitInspectionCase");
+
+        Car car = new Car(year: "2019")
+        {
+            Id = Guid.NewGuid(),
+            VinCode = "1HGCM82633A654321",
+            SerialNumber = "SN87654321",
+            TransmissionType = TransmissionType.Manual,
             Mark = "Toyota Corolla"
         };
 
-        // Demonstration of the GetCarInfo methods for a car without a year of manufacture
-        Console.WriteLine(carWithoutYear.GetCarInfo());
-        Console.WriteLine(carWithoutYear.GetCarInfo(true));
+        Inspector inspector = new Inspector
+        {
+            Id = Guid.NewGuid(),
+            FirstName = "Jane",
+            LastName = "Smith",
+            StartDate = new DateTime(2020, 5, 1)
+        };
 
-        Console.ReadKey();
+        Company company = new Company
+        {
+            Id = Guid.NewGuid(),
+            Name = "AutoRentals"
+        };
+
+        Inspection inspection = new Inspection
+        {
+            Id = Guid.NewGuid(),
+            CarId = car.Id,
+            Inspector = inspector,
+            Date = DateTime.Now,
+        };
+
+        var outputManager = new OutputManager();
+        var carManager = new CarManager(car, outputManager);
+        var companyManager = new CompanyManager(company, outputManager);
+        var inspectorManager = new InspectorManager(inspector, outputManager);
+
+        companyManager.AddCar(car);
+
+        inspectorManager.InspectCar(car, inspection);
+        inspectorManager.RecordInspectionResult(inspection, InspectionResult.Unfit);
+        inspectorManager.RemoveCarIfUnfit(carManager, inspection);
+    }
+
+    static void CarWithoutYearCase()
+    {
+        Console.WriteLine("\nCarWithoutYearCase");
+
+        Car car = new Car(year: null)
+        {
+            Id = Guid.NewGuid(),
+            Mark = "Toyota Corolla"
+        };
+
+        var outputManager = new OutputManager();
+        var carManager = new CarManager(car, outputManager);
+
+        Console.WriteLine(carManager.GetCarInfo());
+        Console.WriteLine(carManager.GetCarInfo(true));
     }
 }
