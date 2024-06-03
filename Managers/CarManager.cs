@@ -7,17 +7,19 @@ public sealed class CarManager
     public const string InvalidCar = "Car has no mark";
 
     private readonly Car _car;
+    private readonly OutputManager _outputManager;
 
-    public CarManager(Car car)
+    public CarManager(Car car, OutputManager outputManager)
     {
         _car = car;
+        _outputManager = outputManager;
     }
 
     public Car Car => _car;
 
     public void RemoveCar()
     {
-        Console.WriteLine("Car removed from the system.");
+        _outputManager.Write("Car removed from the system.");
     }
 
     public string GetCarInfo()

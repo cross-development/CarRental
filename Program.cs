@@ -23,11 +23,11 @@ public class Program
     // Handling rent car case
     static void RentCarCase()
     {
-        Console.WriteLine("\nRentCarCase");
+        Console.WriteLine("RentCarCase");
 
         Car car = new Car(year: "2020")
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             VinCode = "1HGCM82633A123456",
             SerialNumber = "SN12345678",
             TransmissionType = TransmissionType.Automatic,
@@ -36,7 +36,7 @@ public class Program
 
         Customer customer = new Customer
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             FirstName = "John",
             LastName = "Doe",
             PassportNumber = "P1234567",
@@ -46,7 +46,7 @@ public class Program
 
         Inspector inspector = new Inspector
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             FirstName = "Jane",
             LastName = "Smith",
             StartDate = new DateTime(2020, 5, 1)
@@ -54,7 +54,7 @@ public class Program
 
         Inspection inspection = new Inspection
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             CarId = car.Id,
             Inspector = inspector,
             Date = DateTime.Now
@@ -62,11 +62,11 @@ public class Program
 
         Company company = new Company
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Name = "AutoRentals",
         };
 
-        Deal deal = new Deal(Id: new Guid(),
+        Deal deal = new Deal(Id: Guid.NewGuid(),
             CompanyId: company.Id,
             CustomerId: customer.Id,
             DealType: DealType.Rent,
@@ -74,11 +74,12 @@ public class Program
             Price: 200.00M,
             DealDate: DateTime.Now);
 
-        var customerManager = new CustomerManager(customer);
-        var companyManager = new CompanyManager(company);
-        var inspectorManager = new InspectorManager(inspector);
-        var dealManager = new DealManager(deal);
-        var carManager = new CarManager(car);
+        var outputManager = new OutputManager();
+        var customerManager = new CustomerManager(customer, outputManager);
+        var companyManager = new CompanyManager(company, outputManager);
+        var inspectorManager = new InspectorManager(inspector, outputManager);
+        var dealManager = new DealManager(deal, outputManager);
+        var carManager = new CarManager(car, outputManager);
 
         customerManager.CarRented += companyManager.OnCarRented;
         customerManager.CarBought += companyManager.OnCarBought;
@@ -91,7 +92,7 @@ public class Program
 
         dealManager.ConcludeDeal();
 
-        deal.GetDealDetails();
+        deal.DisplayDealDetails();
 
         inspectorManager.InspectCar(car, inspection);
         inspectorManager.RecordInspectionResult(inspection, InspectionResult.Fit);
@@ -104,11 +105,11 @@ public class Program
 
     static void SaleCarCase()
     {
-        Console.WriteLine("SaleCarCase");
+        Console.WriteLine("\nSaleCarCase");
 
         Car car = new Car(year: "2018")
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             VinCode = "1HGCM82633A765432",
             SerialNumber = "SN23456789",
             TransmissionType = TransmissionType.Automatic,
@@ -117,17 +118,18 @@ public class Program
 
         Company company = new Company
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Name = "AutoRentals",
         };
 
-        var companyManager = new CompanyManager(company);
+        var outputManager = new OutputManager();
+        var companyManager = new CompanyManager(company, outputManager);
 
         companyManager.AddCar(car);
 
         Customer customer = new Customer
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             FirstName = "John",
             LastName = "Doe",
             PassportNumber = "P1234567",
@@ -135,7 +137,7 @@ public class Program
             Gender = Gender.Male
         };
 
-        Deal deal = new Deal(Id: new Guid(),
+        Deal deal = new Deal(Id: Guid.NewGuid(),
             CompanyId: company.Id,
             CustomerId: customer.Id,
             DealType: DealType.Purchase,
@@ -143,15 +145,15 @@ public class Program
             Price: 15000.00M,
             DealDate: DateTime.Now);
 
-        var dealManager = new DealManager(deal);
-        var customerManager = new CustomerManager(customer);
-        var carManager = new CarManager(car);
+        var dealManager = new DealManager(deal, outputManager);
+        var customerManager = new CustomerManager(customer, outputManager);
+        var carManager = new CarManager(car, outputManager);
 
         customerManager.PayMoney(deal.Price);
         customerManager.BuyCar(car);
         dealManager.ConcludeDeal();
 
-        deal.GetDealDetails();
+        deal.DisplayDealDetails();
 
         companyManager.RemoveCar(car);
 
@@ -165,7 +167,7 @@ public class Program
 
         Car car = new Car(year: "2019")
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             VinCode = "1HGCM82633A654321",
             SerialNumber = "SN87654321",
             TransmissionType = TransmissionType.Manual,
@@ -174,7 +176,7 @@ public class Program
 
         Inspector inspector = new Inspector
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             FirstName = "Jane",
             LastName = "Smith",
             StartDate = new DateTime(2020, 5, 1)
@@ -182,21 +184,22 @@ public class Program
 
         Company company = new Company
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Name = "AutoRentals"
         };
 
         Inspection inspection = new Inspection
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             CarId = car.Id,
             Inspector = inspector,
             Date = DateTime.Now,
         };
 
-        var carManager = new CarManager(car);
-        var companyManager = new CompanyManager(company);
-        var inspectorManager = new InspectorManager(inspector);
+        var outputManager = new OutputManager();
+        var carManager = new CarManager(car, outputManager);
+        var companyManager = new CompanyManager(company, outputManager);
+        var inspectorManager = new InspectorManager(inspector, outputManager);
 
         companyManager.AddCar(car);
 
@@ -211,11 +214,12 @@ public class Program
 
         Car car = new Car(year: null)
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             Mark = "Toyota Corolla"
         };
 
-        var carManager = new CarManager(car);
+        var outputManager = new OutputManager();
+        var carManager = new CarManager(car, outputManager);
 
         Console.WriteLine(carManager.GetCarInfo());
         Console.WriteLine(carManager.GetCarInfo(true));

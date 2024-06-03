@@ -5,19 +5,21 @@ namespace CarRental.Managers;
 public sealed class DealManager
 {
     private readonly Deal _deal;
+    private readonly OutputManager _outputManager;
 
-    public DealManager(Deal deal)
+    public DealManager(Deal deal, OutputManager outputManager)
     {
         _deal = deal;
+        _outputManager = outputManager;
     }
 
     public void ConcludeDeal()
     {
-        Console.WriteLine($"Deal concluded on {_deal.DealDate}");
+        _outputManager.Write($"Deal concluded on {_deal.DealDate}");
     }
 
     public void TerminateDeal()
     {
-        Console.WriteLine("Deal terminated.");
+        _outputManager.Write("Deal terminated.");
     }
 }

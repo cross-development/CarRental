@@ -6,10 +6,12 @@ namespace CarRental.Managers;
 public sealed class InspectorManager
 {
     private readonly Inspector _inspector;
+    private readonly OutputManager _outputManager;
 
-    public InspectorManager(Inspector inspector)
+    public InspectorManager(Inspector inspector, OutputManager outputManager)
     {
         _inspector = inspector;
+        _outputManager = outputManager;
     }
 
     public event EventHandler<Car> CarRemoved;
@@ -20,14 +22,14 @@ public sealed class InspectorManager
         inspection.Inspector = _inspector;
         inspection.CarId = car.Id;
 
-        Console.WriteLine($"Inspection done on {inspection.Date} by {_inspector.FirstName} {_inspector.LastName}");
+        _outputManager.Write($"Inspection done on {inspection.Date} by {_inspector.FirstName} {_inspector.LastName}");
     }
 
     public void RecordInspectionResult(Inspection inspection, InspectionResult result)
     {
         inspection.Result = result;
 
-        Console.WriteLine($"Inspection result recorded: {result}");
+        _outputManager.Write($"Inspection result recorded: {result}");
 
         if (result == InspectionResult.Unfit)
         {

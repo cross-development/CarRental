@@ -5,10 +5,12 @@ namespace CarRental.Managers;
 public sealed class CustomerManager
 {
     private readonly Customer _customer;
+    private readonly OutputManager _outputManager;
 
-    public CustomerManager(Customer customer)
+    public CustomerManager(Customer customer, OutputManager outputManager)
     {
         _customer = customer;
+        _outputManager = outputManager;
     }
 
     public Customer Customer => _customer;
@@ -21,7 +23,7 @@ public sealed class CustomerManager
     {
         _customer.RentDate = DateTime.Now;
 
-        Console.WriteLine($"Car rented on {_customer.RentDate.Value}");
+        _outputManager.Write($"Car rented on {_customer.RentDate.Value}");
         
         CarRented?.Invoke(this, car);
     }
@@ -30,19 +32,19 @@ public sealed class CustomerManager
     {
         _customer.PurchaseDate = DateTime.Now;
 
-        Console.WriteLine($"Car bought on {_customer.PurchaseDate.Value}");
+        _outputManager.Write($"Car bought on {_customer.PurchaseDate.Value}");
         
         CarBought?.Invoke(this, car);
     }
 
     public void ReturnCar(Car car)
     {
-        Console.WriteLine("Car returned.");
+        _outputManager.Write("Car returned.");
     }
 
     public void PayMoney(decimal amount)
     {
-        Console.WriteLine($"Paid {amount}");
+        _outputManager.Write($"Paid {amount}");
 
         MoneyPaid?.Invoke(this, amount);
     }
